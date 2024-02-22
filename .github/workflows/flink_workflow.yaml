@@ -1,0 +1,30 @@
+name: Run flink Command on Push
+
+on:
+  push:
+    branches:
+      - main  # You can change this to whatever branch you want to trigger the workflow on
+
+jobs:
+  run_xyz_command:
+    runs-on: aws-dev-jumpserver  # You can change the operating system if needed
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Find SQL files
+      id: find_sql_files
+      run: |
+        sql_files=$(git diff-tree --no-commit-id --name-only -r ${{ github.event.before }} ${{ github.sha }} | grep ".sql")
+        echo "::set-output name=sql_files::$(echo "$sql_files")"
+
+    - name: Run XYZ Command
+      run: |
+        sql_files="${{ steps.find_sql_files.outputs.sql_files }}"
+        if [ -n "$sql_files" ]; then
+          for file in $sql_files; do
+            sudo flink/flink-1.18.0/bin/sql-client.sh -f "$file" -e 10.0.6.133:8081
+          done
+        fi
+
