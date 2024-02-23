@@ -17,7 +17,7 @@ jobs:
       id: find_sql_files
       run: |
         latest_commit=$(git rev-parse HEAD)
-        prev_commit=$(git rev-parse HEAD~1 2>/dev/null || echo "")
+        prev_commit=$(git rev-parse HEAD^ 2>/dev/null || echo "")
         if [ -z "$prev_commit" ]; then
           prev_commit=$(git hash-object -t tree /dev/null)
         fi
