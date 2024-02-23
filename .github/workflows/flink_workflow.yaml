@@ -16,7 +16,9 @@ jobs:
     - name: Find SQL files
       id: find_sql_files
       run: |
-        sql_files=$(git diff-tree --no-commit-id --name-only -r ${{ github.event.before }} ${{ github.sha }} | grep ".sql")
+        latest_commit=$(git rev-parse HEAD)
+        prev_commit=$(git rev-parse HEAD~1)
+        sql_files=$(git diff --name-only $prev_commit $latest_commit | grep ".sql")
         echo "::set-output name=sql_files::$(echo "$sql_files")"
     
     - name: SSH into remote instance and run command
