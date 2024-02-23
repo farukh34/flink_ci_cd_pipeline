@@ -21,6 +21,7 @@ jobs:
           echo "::set-output name=sql_files::$sql_files"
         else
           echo "No SQL files found in the latest commit"
+          exit 1
         fi
     
     - name: SSH into remote instance and run command
