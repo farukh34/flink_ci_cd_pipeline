@@ -17,7 +17,7 @@ jobs:
       id: find_sql_files
       run: |
         latest_commit=$(git rev-parse HEAD)
-        prev_commit=$(git rev-parse HEAD~1)
+        prev_commit=$(git rev-parse HEAD~1 || echo $(git hash-object -t tree /dev/null))
         sql_files=$(git diff --name-only $prev_commit $latest_commit | grep ".sql")
         echo "::set-output name=sql_files::$(echo "$sql_files")"
     
