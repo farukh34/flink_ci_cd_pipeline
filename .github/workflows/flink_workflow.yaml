@@ -17,7 +17,11 @@ jobs:
       id: find_sql_files
       run: |
         sql_files=$(git diff-tree --no-commit-id --name-only -r HEAD | grep ".sql")
-        echo "::set-output name=sql_files::$(echo "$sql_files")"
+        if [ -n "$sql_files" ]; then
+          echo "::set-output name=sql_files::$sql_files"
+        else
+          echo "No SQL files found in the latest commit"
+        fi
     
     - name: SSH into remote instance and run command
       run: |
