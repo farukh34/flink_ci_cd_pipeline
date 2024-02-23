@@ -8,10 +8,19 @@ on:
 jobs:
   run_xyz_command:
     runs-on: ubuntu-latest  # You can change the operating system if needed
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        branch:
+          - master
+          - v4.0-release
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
+      with:
+        ref: ${{ matrix.branch }}
 
     - name: Find SQL files
       id: find_sql_files
