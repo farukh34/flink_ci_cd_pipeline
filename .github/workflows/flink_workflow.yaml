@@ -25,7 +25,7 @@ jobs:
         username: ec2-user
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: 22
-      script: |
+        script: |
         sql_files="${{ steps.find_sql_files.outputs.sql_files }}"
         if [ -n "$sql_files" ]; then
           for file in $sql_files; do
