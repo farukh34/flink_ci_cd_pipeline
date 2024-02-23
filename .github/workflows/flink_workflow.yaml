@@ -35,6 +35,6 @@ jobs:
               FLINK_HOME=/home/ec2-user/flink/flink-1.18.0
               # Loop through files and execute Flink command
               for file in $sql_files; do
-                $FLINK_HOME/bin/sql-client.sh -f "$file" -e 10.0.6.133:8081
+                $FLINK_HOME/bin/sql-client.sh -f /flink_custom_rules/"$file" -e 10.0.6.133:8081
               done
             fi
