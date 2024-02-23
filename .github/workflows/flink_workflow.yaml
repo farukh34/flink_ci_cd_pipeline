@@ -20,13 +20,13 @@ jobs:
         echo "::set-output name=sql_files::$sql_files"
     
     - name: SSH into remote instance and run command
-      uses: appleboy/ssh-action@master
+      uses: /home/ec2-user
       with:
         host: ec2-18-207-123-14.compute-1.amazonaws.com
         username: ec2-user
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: 22
-        run: |
+        script: |
         sql_files="${{ steps.find_sql_files.outputs.sql_files }}"
         if [ -n "$sql_files" ]; then
           for file in $sql_files; do
