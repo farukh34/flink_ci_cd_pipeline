@@ -3,11 +3,11 @@ name: Run flink Command on Push
 on:
   push:
     branches:
-      - main  # You can change this to whatever branch you want to trigger the workflow on
+      - main
 
 jobs:
   run_xyz_command:
-    runs-on: ubuntu-latest  # You can change the operating system if needed
+    runs-on: ubuntu-latest
   
     steps:
     - name: Checkout repository
@@ -28,13 +28,42 @@ jobs:
         port: 22
         script: |
           # Retrieve SQL files from output
-            sql_files="${{ steps.find_sql_files.outputs.sql_files }}"
+          sql_files="${{ steps.find_sql_files.outputs.sql_files }}"
 
-            if [ -n "$sql_files" ]; then
-              # Ensure Flink installation path is correct
-              FLINK_HOME=/home/ec2-user/flink/flink-1.18.0
-              # Loop through files and execute Flink command
-              for file in $sql_files; do
-                $FLINK_HOME/bin/sql-client.sh -f /home/ec2-user/flink_custom_rules/"$file" -e 10.0.6.133:8081
-              done
-            fi
+          if [ -n "$sql_files" ]; then
+            # Ensure Flink installation path is correct
+            FLINK_HOME=/home/ec2-user/flink/flink-1.18.0
+            FLINK_JOB_IDS=/home/ec2-user/flink_ci_cd_pipeline/job_ids
+            FLINK_SQL_FILES=/home/ec2-user/flink_ci_cd_pipeline
+            # Pull latest changes from the Git repository
+            cd $FLINK_SQL_FILES
+            git config --global user.email "fshaik@blusapphire.com" # Replace with a valid email
+            git config --global user.name "farukh34" # Replace with desired username
+            git pull https://$GH_USERNAME:$GH_TOKEN@github.com/username/repo.git main
+            
+            # Loop through files
+            for file in $sql_files; do
+              # Check if file exists in job_id directory
+              if [ -f $FLINK_JOB_IDS/$file ]; then
+                # Get job ID from the file
+                job_id=$(cat $FLINK_JOB_IDS/$file)
+                
+                # Cancel the existing job
+                curl -X PATCH "http://localhost:8081/jobs/$job_id?mode=cancel"
+                
+                # Delete the file
+                rm $FLINK_JOB_IDS/$file
+              fi
+              
+              # Run Flink command and capture job ID
+              job_id=$($FLINK_HOME/bin/sql-client.sh -f $FLINK_SQL_FILES/$file -e 10.0.6.133:8081 2>&1 | grep 'Job ID' | awk '{print $3}')
+              
+              # Create new file with job ID
+              echo "$job_id" > $FLINK_JOB_IDS/$file
+            done
+            
+            # Commit and push changes to the Git repository
+            git add .
+            git commit -m "Update job_id directory and submit new jobs"
+            git push https://$GH_USERNAME:$GH_TOKEN@github.com/username/repo.git main
+          fi
