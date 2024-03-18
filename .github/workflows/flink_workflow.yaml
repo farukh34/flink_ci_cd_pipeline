@@ -39,7 +39,7 @@ jobs:
             cd $FLINK_SQL_FILES
             git config --global user.email "fshaik@blusapphire.com" # Replace with a valid email
             git config --global user.name "farukh34" # Replace with desired username
-            git pull https://$GH_USERNAME:$GH_TOKEN@github.com/username/repo.git main
+            git pull https://$GH_USERNAME:$GH_TOKEN@github.com/username/flink_ci_cd_pipeline.git main
             
             # Loop through files
             for file in $sql_files; do
@@ -61,9 +61,8 @@ jobs:
               # Create new file with job ID
               echo "$job_id" > $FLINK_JOB_IDS/$file
             done
-            
-            # Commit and push changes to the Git repository
+             # Commit and push changes to the Git repository
             git add .
             git commit -m "Update job_id directory and submit new jobs"
-            git push https://$GH_USERNAME:$GH_TOKEN@github.com/username/repo.git main
+            git push https://$GH_USERNAME:$GH_TOKEN@github.com/username/flink_ci_cd_pipeline.git main
           fi
