@@ -39,7 +39,7 @@ jobs:
             cd $FLINK_SQL_FILES
             git config --global user.email "fshaik@blusapphire.com" # Replace with a valid email
             git config --global user.name "farukh34" # Replace with desired username
-            git pull https://$GH_USERNAME:$GH_TOKEN@github.com/$GH_USERNAME/flink_ci_cd_pipeline.git main
+            git pull https://github.com/$GH_USERNAME/flink_ci_cd_pipeline.git main
             
             # Loop through files
             for file in $sql_files; do
