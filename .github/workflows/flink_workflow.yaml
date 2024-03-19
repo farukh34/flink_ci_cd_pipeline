@@ -41,13 +41,14 @@ jobs:
             
             # Loop through files
             for file in $sql_files; do
+              sql_file_name=$(basename "$file" .sql)
               # Check if file exists in job_id directory
-              if [ -f $FLINK_JOB_IDS/$file ]; then
+              if [ -f $FLINK_JOB_IDS/$sql_file_name ]; then
                 # Get job ID from the file
-                job_id=$(cat $FLINK_JOB_IDS/$file)
+                old_job_id=$(cat $FLINK_JOB_IDS/$file)
                 
                 # Cancel the existing job
-                curl -X PATCH "http://localhost:8081/jobs/$job_id?mode=cancel"
+                curl -X PATCH "http://localhost:8081/jobs/$old_job_id?mode=cancel"
                 
                 # Delete the file
                 rm $FLINK_JOB_IDS/$file
@@ -57,7 +58,7 @@ jobs:
               job_id=$(sudo $FLINK_HOME/bin/sql-client.sh -f $FLINK_SQL_FILES/$file -e 10.0.6.133:8081 2>&1 | grep 'Job ID' | awk '{print $3}')
               
               # Create new file with job ID
-              echo "$job_id" > $FLINK_JOB_IDS/$file
+              echo "$job_id" > $FLINK_JOB_IDS/$sql_file_name
             done
             
             # Commit and push changes to the Git repository
