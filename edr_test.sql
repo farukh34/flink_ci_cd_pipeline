@@ -585,7 +585,7 @@ WITH (
 );
 
 
-ADD jar 'flink/flink-1.18.0/bin/jars/flink-sql-connector-kafka-3.0.2-1.18.jar';
+ADD jar '/home/ec2-user/flink/flink-1.18.0/bin/jars/flink-sql-connector-kafka-3.0.2-1.18.jar';
 
 EXECUTE STATEMENT SET
 BEGIN
