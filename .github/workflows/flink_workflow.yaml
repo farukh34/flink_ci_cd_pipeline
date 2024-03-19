@@ -16,8 +16,10 @@ jobs:
     - name: Find SQL files
       id: find_sql_files
       run: |
-        sql_files=$(git show --name-only HEAD | grep "\.sql$")
-        echo "sql_files=${sql_files}" >> $GITHUB_STATE
+        sql_files=$(git show --name-only HEAD | grep "\.sql$" || echo "")
+        if [ -n "$sql_files" ]; then
+          echo "$sql_files" >> $GITHUB_STATE
+        fi
     
     - name: SSH into remote instance and run command
       uses: appleboy/ssh-action@v1.0.3
