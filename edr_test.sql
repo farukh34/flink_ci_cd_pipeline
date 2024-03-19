@@ -565,7 +565,7 @@ CREATE Temporary TABLE EdrTable (
 WITH (
   'connector' = 'kafka',
   'topic' = 'edr',
-  'properties.bootstrap.servers' = '10.0.16.84:9092,10.0.17.13:9092,10.0.36.107:9092,10.0.5.179:9092,10.0.12.164:9092',
+  'properties.bootstrap.servers' = '10.0.10.105:9092,10.0.22.60:9092,10.0.43.247:9092',
   'properties.group.id' = 'flink-edrtest',
   'scan.startup.mode' = 'latest-offset',
   'format' = 'json',
@@ -589,8 +589,7 @@ ADD jar '/home/ec2-user/flink/flink-1.18.0/bin/jars/flink-sql-connector-kafka-3.
 
 EXECUTE STATEMENT SET
 BEGIN
-insert into FlinOut
-SELECT
+insert into FlinkOut SELECT
   JSON_OBJECT ('event' VALUE JSON_OBJECT('host' VALUE `host`.`name`, 'uuid' VALUE `uuid`, 'created' VALUE `event`.`created`, 'code' VALUE `event`.`code`),
        'observables' VALUE JSON_OBJECT('event' VALUE JSON_OBJECT ('code' VALUE  `event`.`code`, 'type' VALUE  `event`.`type`, 'category' VALUE  `event`.`category`, 'action' VALUE  `event`.`action`, 'channel' VALUE  `event`.`channel`),'host' VALUE JSON_OBJECT ('name' VALUE  `host`.`name`),'user' VALUE JSON_OBJECT ('name' VALUE  `user`.`name`, 'domain' VALUE  `user`.`domain`, 'id' VALUE  `user`.`id`),'winlog' VALUE JSON_OBJECT ('provider_name' VALUE  `winlog`.`provider_name`, 'servicefilename' VALUE  `winlog`.`servicefilename`, 'taskname' VALUE  `winlog`.`taskname`),'process' VALUE JSON_OBJECT ('executable' VALUE  `process`.`executable`, 'command_line' VALUE  `process`.`command_line`, 'name' VALUE  `process`.`name`, 'parent' VALUE  JSON_OBJECT ('name' VALUE  `process`.`parent`.`name`)),'destination' VALUE JSON_OBJECT ('user' VALUE  JSON_OBJECT ('name' VALUE  `destination`.`user`.`name`, 'domain' VALUE  `destination`.`user`.`domain`, 'id' VALUE  `destination`.`user`.`id`), 'ip' VALUE  `destination`.`ip`, 'port' VALUE  `destination`.`port`),'service' VALUE JSON_OBJECT ('name' VALUE  `service`.`name`),'dns' VALUE JSON_OBJECT ('question' VALUE  JSON_OBJECT ('name' VALUE  `dns`.`question`.`name`)),'file' VALUE JSON_OBJECT ('path' VALUE  `file`.`path`),'source' VALUE JSON_OBJECT ('ip' VALUE  `source`.`ip`, 'port' VALUE  `source`.`port`),'network' VALUE JSON_OBJECT ('direction' VALUE  `network`.`direction`)),
        'observer' value JSON_OBJECT ('type' VALUE `observer`.`type`),
