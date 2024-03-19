@@ -58,8 +58,8 @@ jobs:
                 rm $FLINK_JOB_IDS/$sql_file_name
               fi
               
-              # Run Flink command and capture job ID
-              sudo $FLINK_HOME -f $file -e 10.0.6.133:8081 2>&1 | grep 'Job ID' | awk '{print $3}' > $sql_file_name
+               # Run Flink command and capture job ID
+               sudo $FLINK_HOME -f $file -e 10.0.6.133:8081 2>&1 | grep 'Job ID' | awk '{print $3}' > $FLINK_JOB_IDS/$sql_file_name
             done
              # Commit and push changes to the Git repository
             git add .
