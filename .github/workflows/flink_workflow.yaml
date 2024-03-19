@@ -59,7 +59,10 @@ jobs:
               fi
               
               # Run Flink command and capture job ID
-              job_id=$($FLINK_HOME/bin/sql-client.sh -f $FLINK_SQL_FILES/$file -e 10.0.6.133:8081 2>&1 | grep 'Job ID' | awk '{print $3}')
+              flink_output=$($FLINK_HOME/bin/sql-client.sh -f $FLINK_SQL_FILES/$file -e 10.0.6.133:8081 2>&1)
+              echo "Flink command output: $flink_output"
+              job_id=$(echo "$flink_output" | grep 'Job ID' | awk '{print $3}')
+              echo "Extracted job ID: $job_id"
               
               # Create new file with job ID
               echo "$job_id" > $FLINK_JOB_IDS/$sql_file_name
