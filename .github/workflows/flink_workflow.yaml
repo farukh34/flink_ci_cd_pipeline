@@ -59,12 +59,31 @@ jobs:
               fi
               
               # Run Flink command and capture job ID
-              flink_output=$($FLINK_HOME/bin/sql-client.sh -f "$FLINK_SQL_FILES/$file" -e 10.0.6.133:8081 2>&1)
-              echo "Flink command output: $flink_output"
+            job_id=$(echo "$flink_output" | grep 'Job ID' | awk '{print $3}')
+            echo "Extracted job ID: $job_id"
+            
+            # Check if job ID is not empty
+            if [ -n "$job_id" ]; then
+              # Ensure that FLINK_JOB_IDS directory exists
+              mkdir -p "$FLINK_JOB_IDS"
+            
+              # Create new file with job ID
+              job_id_file="$FLINK_JOB_IDS/${sql_file_name}_${job_id}"
+              echo "Creating job ID file: $job_id_file"
               
-              # Extract job ID
-              job_id=$(echo "$flink_output" | grep 'Job ID' | awk '{print $3}')
-              echo "Extracted job ID: $job_id"
+              # Write job ID to file
+              echo "$job_id" > "$job_id_file"
+              
+              # Check if file creation was successful
+              if [ $? -eq 0 ]; then
+                echo "Job ID file successfully created with job ID: $job_id"
+              else
+                echo "Error: Failed to create job ID file: $job_id_file"
+                exit 1
+              fi
+            else
+              echo "Warning: No job ID extracted or it is empty. Skipping file creation."
+            fi
             done
              # Commit and push changes to the Git repository
             git add .
