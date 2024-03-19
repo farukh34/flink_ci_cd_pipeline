@@ -64,5 +64,5 @@ jobs:
              # Commit and push changes to the Git repository
             git add .
             git commit -m "Update job_id directory and submit new jobs"
-            git push https://farukh34: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@github.com/$GH_USERNAME/flink_ci_cd_pipeline.git
+            git push https://farukh34:$GH_TOKEN@github.com/farukh34/flink_ci_cd_pipeline.git
           fi
