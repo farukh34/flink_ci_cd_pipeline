@@ -47,13 +47,13 @@ jobs:
               # Check if file exists in job_id directory
               if [ -f $FLINK_JOB_IDS/$sql_file_name ]; then
                 # Get job ID from the file
-                old_job_id=$(cat $FLINK_JOB_IDS/$file)
+                old_job_id=$(cat $FLINK_JOB_IDS/$sql_file_name)
                 
                 # Cancel the existing job
                 curl -X PATCH "http://localhost:8081/jobs/$old_job_id?mode=cancel"
                 
                 # Delete the file
-                rm $FLINK_JOB_IDS/$file
+                rm $FLINK_JOB_IDS/$sql_file_name
               fi
               
               # Run Flink command and capture job ID
