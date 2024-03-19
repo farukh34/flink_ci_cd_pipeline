@@ -1,5 +1,5 @@
 SET 'execution.checkpointing.interval' = '1min';
-SET pipeline.name=e37ab053_edr_batch01;
+SET pipeline.name=e37ab053_edr_batch02;
 SET yarn.application.queue=root;
 DROP TABLE IF EXISTS EdrTable;
 CREATE Temporary TABLE EdrTable (
