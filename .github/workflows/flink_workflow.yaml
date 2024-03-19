@@ -37,9 +37,9 @@ jobs:
             FLINK_SQL_FILES=/home/ec2-user/flink_ci_cd_pipeline
             # Pull latest changes from the Git repository
             cd $FLINK_SQL_FILES
-            git config --global user.email "fshaik@blusapphire.com" # Replace with a valid email
-            git config --global user.name "farukh34" # Replace with desired username
-            git pull https://github.com/$GH_USERNAME/flink_ci_cd_pipeline.git main
+            #git config --global user.email "fshaik@blusapphire.com" # Replace with a valid email
+            #git config --global user.name "farukh34" # Replace with desired username
+            git pull https://github.com/$GH_USERNAME/flink_ci_cd_pipeline.git
             
             # Loop through files
             for file in $sql_files; do
