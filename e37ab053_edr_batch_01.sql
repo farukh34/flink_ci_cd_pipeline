@@ -1,5 +1,5 @@
 SET 'execution.checkpointing.interval' = '1min';
-SET pipeline.name=e37ab053_edr_batch02;
+SET pipeline.name=e37ab053_edr_batch03;
 SET yarn.application.queue=root;
 DROP TABLE IF EXISTS EdrTable;
 CREATE Temporary TABLE EdrTable (
@@ -566,7 +566,7 @@ WITH (
   'connector' = 'kafka',
   'topic' = 'edr',
   'properties.bootstrap.servers' = '10.0.10.105:9092,10.0.22.60:9092,10.0.43.247:9092',
-  'properties.group.id' = 'flink-edr02',
+  'properties.group.id' = 'flink-edr03',
   'scan.startup.mode' = 'latest-offset',
   'format' = 'json',
  'json.fail-on-missing-field' = 'false',
