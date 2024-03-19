@@ -615,5 +615,5 @@ insert into FlinkOut SELECT
        'tacticidlist' VALUE ARRAY['TA0003'],
        'techniqueidlist' VALUE ARRAY['T1546.003']
 
-  )) FROM EdrTable WHERE (`organization`.`id`='e37ab053') AND ((REGEXP_EXTRACT(cast(`EventID` as VARCHAR), '^19$') is not null OR REGEXP_EXTRACT(cast(`EventID` as VARCHAR), '^20$') is not null OR REGEXP_EXTRACT(cast(`EventID` as VARCHAR), '^21$') is not null) );
+  )) FROM EdrTable WHERE (`organization`.`id`='e37ab053') AND ((REGEXP_EXTRACT(cast(`event.id` as VARCHAR), '^19$') is not null OR REGEXP_EXTRACT(cast(`event`.`id` as VARCHAR), '^20$') is not null OR REGEXP_EXTRACT(cast(`event`.`id` as VARCHAR), '^21$') is not null) );
 END;
