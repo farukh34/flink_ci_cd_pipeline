@@ -16,10 +16,8 @@ jobs:
     - name: Find SQL files
       id: find_sql_files
       run: |
-        sql_files=$(git show --name-only HEAD | grep "\.sql$" || echo "")
-        if [ -n "$sql_files" ]; then
-          echo "$sql_files" >> $GITHUB_STATE
-        fi
+        sql_files=$(git show --name-only HEAD | grep "\.sql$")
+        echo "::set-output name=sql_files::$sql_files"
     
     - name: SSH into remote instance and run command
       uses: appleboy/ssh-action@v1.0.3
@@ -30,7 +28,7 @@ jobs:
         port: 22
         script: |
           # Retrieve SQL files from output
-          sql_files="${{ env.sql_files }}"
+          sql_files="${{ steps.find_sql_files.outputs.sql_files }}"
 
           if [ -n "$sql_files" ]; then
             # Ensure Flink installation path is correct
