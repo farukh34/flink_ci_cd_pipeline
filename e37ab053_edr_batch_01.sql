@@ -565,8 +565,8 @@ CREATE Temporary TABLE EdrTable (
 WITH (
   'connector' = 'kafka',
   'topic' = 'edr',
-  'properties.bootstrap.servers' = '10.0.16.84:9092,10.0.17.13:9092,10.0.36.107:9092,10.0.5.179:9092,10.0.12.164:9092',
-  'properties.group.id' = 'flink-edr11',
+  'properties.bootstrap.servers' = '10.0.10.105:9092,10.0.22.60:9092,10.0.43.247:9092',
+  'properties.group.id' = 'flink-edr03',
   'scan.startup.mode' = 'latest-offset',
   'format' = 'json',
  'json.fail-on-missing-field' = 'false',
@@ -578,7 +578,7 @@ WITH (
 ) WITH (
   'connector' = 'kafka',
   'topic' = 'ams_alert_in',
-  'properties.bootstrap.servers' = '10.0.16.84:9092,10.0.17.13:9092,10.0.36.107:9092,10.0.5.179:9092,10.0.12.164:9092',
+  'properties.bootstrap.servers' = '10.0.10.105:9092,10.0.22.60:9092,10.0.43.247:9092',
   'properties.group.id' = 'flink',
   'scan.startup.mode' = 'earliest-offset',
   'format' = 'raw'
@@ -615,5 +615,5 @@ insert into FlinkOut SELECT
        'tacticidlist' VALUE ARRAY['TA0003'],
        'techniqueidlist' VALUE ARRAY['T1546.003']
 
-  )) FROM EdrTable WHERE (`organization`.`id`='e37ab053') AND ((REGEXP_EXTRACT(cast(`event.id` as VARCHAR), '^19$') is not null OR REGEXP_EXTRACT(cast(`event`.`id` as VARCHAR), '^20$') is not null OR REGEXP_EXTRACT(cast(`event`.`id` as VARCHAR), '^21$') is not null) );
+  )) FROM EdrTable WHERE (`organization`.`id`='e37ab053') AND ((REGEXP_EXTRACT(cast(`event.code` as VARCHAR), '^19$') is not null OR REGEXP_EXTRACT(cast(`event`.`code` as VARCHAR), '^20$') is not null OR REGEXP_EXTRACT(cast(`event`.`code` as VARCHAR), '^21$') is not null) );
 END;
