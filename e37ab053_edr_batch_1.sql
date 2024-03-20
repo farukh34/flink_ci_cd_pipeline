@@ -566,7 +566,7 @@ WITH (
   'connector' = 'kafka',
   'topic' = 'edr',
   'properties.bootstrap.servers' = '10.132.130.134:9092,10.132.142.162:9092,10.132.132.145:9092',
-  'properties.group.id' = 'e37ab053_edr_batch01',
+  'properties.group.id' = 'e37ab053_edr_batch1',
   'scan.startup.mode' = 'latest-offset',
   'format' = 'json',
  'json.fail-on-missing-field' = 'false',
@@ -578,8 +578,8 @@ WITH (
 ) WITH (
   'connector' = 'kafka',
   'topic' = 'ams_alert_in',
-  'properties.bootstrap.servers' = '10.132.130.134:9092,10.132.142.162:9092,10.132.132.145:9092',
-  'properties.group.id' = 'e37ab053_edr_batch01',
+  'properties.bootstrap.servers' = '10.0.16.84:9092,10.0.17.13:9092,10.0.36.107:9092,10.0.5.179:9092,10.0.12.164:9092',
+  'properties.group.id' = 'flink',
   'scan.startup.mode' = 'earliest-offset',
   'format' = 'raw'
 );
@@ -643,33 +643,6 @@ insert into FlinkOut SELECT
        'techniqueidlist' VALUE ARRAY['T1059.005']
 
   )) FROM EdrTable WHERE (`organization`.`id`='e37ab053') AND ( ( (REGEXP_EXTRACT(LOWER(cast(`process`.`executable` as VARCHAR)), '^.*new\-object.*$') is not null AND REGEXP_EXTRACT(LOWER(cast(`process`.`executable` as VARCHAR)), '^.*net\.webclient.*$') is not null AND REGEXP_EXTRACT(LOWER(cast(`process`.`executable` as VARCHAR)), '^.*\.downloadstring.*$') is not null)  )  OR  ( (REGEXP_EXTRACT(LOWER(cast(`process`.`executable` as VARCHAR)), '^.*new\-object.*$') is not null AND REGEXP_EXTRACT(LOWER(cast(`process`.`executable` as VARCHAR)), '^.*net\.webclient.*$') is not null AND REGEXP_EXTRACT(LOWER(cast(`process`.`executable` as VARCHAR)), '^.*\.downloadfile.*$') is not null)  )  OR  ( (REGEXP_EXTRACT(LOWER(cast(`process`.`executable` as VARCHAR)), '^.*\ iex\(.*$') is not null OR REGEXP_EXTRACT(LOWER(cast(`process`.`executable` as VARCHAR)), '^.*\ \-nop\ .*$') is not null OR REGEXP_EXTRACT(LOWER(cast(`process`.`executable` as VARCHAR)), '^.*\ \-noprofile\ .*$') is not null OR REGEXP_EXTRACT(LOWER(cast(`process`.`executable` as VARCHAR)), '^.*\ \-decode\ .*$') is not null OR REGEXP_EXTRACT(LOWER(cast(`process`.`executable` as VARCHAR)), '^.*\ \-enc\ .*$') is not null OR REGEXP_EXTRACT(LOWER(cast(`process`.`executable` as VARCHAR)), '^.*wscript\.shell.*$') is not null OR REGEXP_EXTRACT(LOWER(cast(`process`.`executable` as VARCHAR)), '^.*system\.security\.cryptography\.frombase64transform.*$') is not null)  ) );
-insert into FlinkOut SELECT
-  JSON_OBJECT ('event' VALUE JSON_OBJECT('host' VALUE `host`.`name`, 'uuid' VALUE `uuid`, 'created' VALUE `event`.`created`, 'code' VALUE `event`.`code`),
-       'observables' VALUE JSON_OBJECT('event' VALUE JSON_OBJECT ('code' VALUE  `event`.`code`, 'type' VALUE  `event`.`type`, 'category' VALUE  `event`.`category`, 'action' VALUE  `event`.`action`, 'channel' VALUE  `event`.`channel`),'host' VALUE JSON_OBJECT ('name' VALUE  `host`.`name`),'user' VALUE JSON_OBJECT ('name' VALUE  `user`.`name`, 'domain' VALUE  `user`.`domain`),'process' VALUE JSON_OBJECT ('name' VALUE  `process`.`name`, 'parent' VALUE  JSON_OBJECT ('name' VALUE  `process`.`parent`.`name`, 'executable' VALUE  `process`.`parent`.`executable`, 'command_line' VALUE  `process`.`parent`.`command_line`), 'executable' VALUE  `process`.`executable`, 'command_line' VALUE  `process`.`command_line`, 'working_directory' VALUE  `process`.`working_directory`, 'pe' VALUE  JSON_OBJECT ('original_file_name' VALUE  `process`.`pe`.`original_file_name`, 'description' VALUE  `process`.`pe`.`description`, 'company' VALUE  `process`.`pe`.`company`, 'product' VALUE  `process`.`pe`.`product`), 'hash' VALUE  JSON_OBJECT ('sha256' VALUE  `process`.`hash`.`sha256`, 'imphash' VALUE  `process`.`hash`.`imphash`)),'file' VALUE JSON_OBJECT ('name' VALUE  `file`.`name`, 'path' VALUE  `file`.`path`, 'hash' VALUE  JSON_OBJECT ('sha256' VALUE  `file`.`hash`.`sha256`, 'imphash' VALUE  `file`.`hash`.`imphash`)),'registry' VALUE JSON_OBJECT ('path' VALUE  `registry`.`path`, 'value' VALUE  `registry`.`value`),'dns' VALUE JSON_OBJECT ('question' VALUE  JSON_OBJECT ('name' VALUE  `dns`.`question`.`name`)),'source' VALUE JSON_OBJECT ('domain' VALUE  `source`.`domain`, 'ip' VALUE  `source`.`ip`, 'port' VALUE  `source`.`port`),'destination' VALUE JSON_OBJECT ('domain' VALUE  `destination`.`domain`, 'ip' VALUE  `destination`.`ip`, 'port' VALUE  `destination`.`port`),'winlog' VALUE JSON_OBJECT ('targetimage' VALUE  `winlog`.`targetimage`, 'grantedaccess' VALUE  `winlog`.`grantedaccess`, 'eventtype' VALUE  `winlog`.`eventtype`, 'initiated' VALUE  `winlog`.`initiated`, 'user' VALUE  `winlog`.`user`, 'state' VALUE  `winlog`.`state`, 'integritylevel' VALUE  `winlog`.`integritylevel`, 'eventnamespace' VALUE  `winlog`.`eventnamespace`, 'name' VALUE  `winlog`.`name`, 'operation' VALUE  `winlog`.`operation`, 'consumer' VALUE  `winlog`.`consumer`, 'filter' VALUE  `winlog`.`filter`)),
-       'observer' value JSON_OBJECT ('type' VALUE `observer`.`type`),
-       'organization' VALUE JSON_OBJECT('id' VALUE `organization`.`id`),
-       'uuid' VALUE UUID(),
-       'alert' VALUE JSON_OBJECT('created' VALUE now(), 'kind' VALUE 'alert', 'level' VALUE 'medium'),
-       'rule' VALUE JSON_OBJECT('id' VALUE 'b03b5530-398a-4f08-b41c-25ad18d352a6', 'name' VALUE 'WMI Event Subscription_custom_clone_clone_clone_clone', 'description' VALUE 'Detects creation of WMI event subscription persistence method'),
-       'observables_list' VALUE ARRAY['NA'],
-       'falsepositives' VALUE ARRAY['Exclude legitimate (vetted) use of WMI event subscription in your network'] ,
-       'tacticidlist' VALUE ARRAY['TA0003'],
-       'techniqueidlist' VALUE ARRAY['T1546.003']
-
-  , 'source_data' VALUE
-  JSON_OBJECT ('event' VALUE JSON_OBJECT('host' VALUE `host`.`name`, 'uuid' VALUE `uuid`, 'created' VALUE `event`.`created`, 'code' VALUE `event`.`code`),
-       'observables' VALUE JSON_OBJECT('event' VALUE JSON_OBJECT ('code' VALUE  `event`.`code`, 'type' VALUE  `event`.`type`, 'category' VALUE  `event`.`category`, 'action' VALUE  `event`.`action`, 'channel' VALUE  `event`.`channel`),'host' VALUE JSON_OBJECT ('name' VALUE  `host`.`name`),'user' VALUE JSON_OBJECT ('name' VALUE  `user`.`name`, 'domain' VALUE  `user`.`domain`),'process' VALUE JSON_OBJECT ('name' VALUE  `process`.`name`, 'parent' VALUE  JSON_OBJECT ('name' VALUE  `process`.`parent`.`name`, 'executable' VALUE  `process`.`parent`.`executable`, 'command_line' VALUE  `process`.`parent`.`command_line`), 'executable' VALUE  `process`.`executable`, 'command_line' VALUE  `process`.`command_line`, 'working_directory' VALUE  `process`.`working_directory`, 'pe' VALUE  JSON_OBJECT ('original_file_name' VALUE  `process`.`pe`.`original_file_name`, 'description' VALUE  `process`.`pe`.`description`, 'company' VALUE  `process`.`pe`.`company`, 'product' VALUE  `process`.`pe`.`product`), 'hash' VALUE  JSON_OBJECT ('sha256' VALUE  `process`.`hash`.`sha256`, 'imphash' VALUE  `process`.`hash`.`imphash`)),'file' VALUE JSON_OBJECT ('name' VALUE  `file`.`name`, 'path' VALUE  `file`.`path`, 'hash' VALUE  JSON_OBJECT ('sha256' VALUE  `file`.`hash`.`sha256`, 'imphash' VALUE  `file`.`hash`.`imphash`)),'registry' VALUE JSON_OBJECT ('path' VALUE  `registry`.`path`, 'value' VALUE  `registry`.`value`),'dns' VALUE JSON_OBJECT ('question' VALUE  JSON_OBJECT ('name' VALUE  `dns`.`question`.`name`)),'source' VALUE JSON_OBJECT ('domain' VALUE  `source`.`domain`, 'ip' VALUE  `source`.`ip`, 'port' VALUE  `source`.`port`),'destination' VALUE JSON_OBJECT ('domain' VALUE  `destination`.`domain`, 'ip' VALUE  `destination`.`ip`, 'port' VALUE  `destination`.`port`),'winlog' VALUE JSON_OBJECT ('targetimage' VALUE  `winlog`.`targetimage`, 'grantedaccess' VALUE  `winlog`.`grantedaccess`, 'eventtype' VALUE  `winlog`.`eventtype`, 'initiated' VALUE  `winlog`.`initiated`, 'user' VALUE  `winlog`.`user`, 'state' VALUE  `winlog`.`state`, 'integritylevel' VALUE  `winlog`.`integritylevel`, 'eventnamespace' VALUE  `winlog`.`eventnamespace`, 'name' VALUE  `winlog`.`name`, 'operation' VALUE  `winlog`.`operation`, 'consumer' VALUE  `winlog`.`consumer`, 'filter' VALUE  `winlog`.`filter`)),
-       'observer' value JSON_OBJECT ('type' VALUE `observer`.`type`),
-       'organization' VALUE JSON_OBJECT('id' VALUE `organization`.`id`),
-       'uuid' VALUE UUID(),
-       'alert' VALUE JSON_OBJECT('created' VALUE now(), 'kind' VALUE 'alert', 'level' VALUE 'medium'),
-       'rule' VALUE JSON_OBJECT('id' VALUE 'b03b5530-398a-4f08-b41c-25ad18d352a6', 'name' VALUE 'WMI Event Subscription_custom_clone_clone_clone_clone', 'description' VALUE 'Detects creation of WMI event subscription persistence method'),
-       'observables_list' VALUE ARRAY['NA'],
-       'falsepositives' VALUE ARRAY['Exclude legitimate (vetted) use of WMI event subscription in your network'] ,
-       'tacticidlist' VALUE ARRAY['TA0003'],
-       'techniqueidlist' VALUE ARRAY['T1546.003']
-
-  )) FROM EdrTable WHERE (`organization`.`id`='e37ab053') AND ((REGEXP_EXTRACT(cast(`event`.`code` as VARCHAR), '^19$') is not null OR REGEXP_EXTRACT(cast(`event`.`code` as VARCHAR), '^20$') is not null OR REGEXP_EXTRACT(cast(`event`.`code` as VARCHAR), '^21$') is not null) );
 insert into FlinkOut SELECT
   JSON_OBJECT ('event' VALUE JSON_OBJECT('host' VALUE `host`.`name`, 'uuid' VALUE `uuid`, 'created' VALUE `event`.`created`, 'code' VALUE `event`.`code`),
        'observables' VALUE JSON_OBJECT('winlog' VALUE JSON_OBJECT ('user' VALUE  `winlog`.`user`, 'operation' VALUE  `winlog`.`operation`)),
