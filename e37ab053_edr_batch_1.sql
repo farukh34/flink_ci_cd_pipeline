@@ -565,7 +565,7 @@ CREATE Temporary TABLE EdrTable (
 WITH (
   'connector' = 'kafka',
   'topic' = 'edr',
-  'properties.bootstrap.servers' = '10.132.130.134:9092,10.132.142.162:9092,10.132.132.145:9092',
+  'properties.bootstrap.servers' = '10.0.132.234:9092,10.0.22.60:9092,10.0.43.247:9092',
   'properties.group.id' = 'e37ab053_edr_batch1',
   'scan.startup.mode' = 'latest-offset',
   'format' = 'json',
@@ -578,8 +578,8 @@ WITH (
 ) WITH (
   'connector' = 'kafka',
   'topic' = 'ams_alert_in',
-  'properties.bootstrap.servers' = '10.0.16.84:9092,10.0.17.13:9092,10.0.36.107:9092,10.0.5.179:9092,10.0.12.164:9092',
-  'properties.group.id' = 'flink',
+  'properties.bootstrap.servers' = '10.0.132.234:9092,10.0.22.60:9092,10.0.43.247:9092',
+  'properties.group.id' = 'e37ab053_edr_batch1',
   'scan.startup.mode' = 'earliest-offset',
   'format' = 'raw'
 );
@@ -589,5 +589,31 @@ ADD jar '/home/ec2-user/flink/flink-1.18.0/bin/jars/flink-sql-connector-kafka-3.
 
 EXECUTE STATEMENT SET
 BEGIN
-insert into FlinkOut SELECT JSON_OBJECT ('uuid' VALUE UUID()) from EdrTable where `organization`.`id` = 'abcdefghijkl123456789';
+insert into FlinkOut SELECT
+  JSON_OBJECT ('event' VALUE JSON_OBJECT('host' VALUE `host`.`name`, 'uuid' VALUE `uuid`, 'created' VALUE `event`.`created`, 'code' VALUE `event`.`code`),
+       'observables' VALUE JSON_OBJECT('winlog' VALUE JSON_OBJECT ('user' VALUE  `winlog`.`user`, 'operation' VALUE  `winlog`.`operation`)),
+       'observer' value JSON_OBJECT ('type' VALUE `observer`.`type`),
+       'organization' VALUE JSON_OBJECT('id' VALUE `organization`.`id`),
+       'uuid' VALUE UUID(),
+       'alert' VALUE JSON_OBJECT('created' VALUE now(), 'kind' VALUE 'alert', 'level' VALUE 'high'),
+       'rule' VALUE JSON_OBJECT('id' VALUE 'ffeddb69-3526-4857-9f98-1f1ca43518dd', 'name' VALUE 'Suspicious Scripting in a WMI Consumer_custom_clone_clone_clone', 'description' VALUE 'Detects suspicious commands that are related to scripting/powershell in WMI Event Consumers'),
+       'observables_list' VALUE ARRAY['winlog.user', 'winlog.operation'],
+       'falsepositives' VALUE ARRAY['Legitimate administrative scripts'] ,
+       'tacticidlist' VALUE ARRAY['TA0002'],
+       'techniqueidlist' VALUE ARRAY['T1059.005']
+
+  , 'source_data' VALUE
+  JSON_OBJECT ('event' VALUE JSON_OBJECT('host' VALUE `host`.`name`, 'uuid' VALUE `uuid`, 'created' VALUE `event`.`created`, 'code' VALUE `event`.`code`),
+       'observables' VALUE JSON_OBJECT('winlog' VALUE JSON_OBJECT ('user' VALUE  `winlog`.`user`, 'operation' VALUE  `winlog`.`operation`)),
+       'observer' value JSON_OBJECT ('type' VALUE `observer`.`type`),
+       'organization' VALUE JSON_OBJECT('id' VALUE `organization`.`id`),
+       'uuid' VALUE UUID(),
+       'alert' VALUE JSON_OBJECT('created' VALUE now(), 'kind' VALUE 'alert', 'level' VALUE 'high'),
+       'rule' VALUE JSON_OBJECT('id' VALUE 'ffeddb69-3526-4857-9f98-1f1ca43518dd', 'name' VALUE 'Suspicious Scripting in a WMI Consumer_custom_clone_clone_clone', 'description' VALUE 'Detects suspicious commands that are related to scripting/powershell in WMI Event Consumers'),
+       'observables_list' VALUE ARRAY['winlog.user', 'winlog.operation'],
+       'falsepositives' VALUE ARRAY['Legitimate administrative scripts'] ,
+       'tacticidlist' VALUE ARRAY['TA0002'],
+       'techniqueidlist' VALUE ARRAY['T1059.005']
+
+  )) FROM EdrTable WHERE (`organization`.`id`='e37ab053') AND ( ( (REGEXP_EXTRACT(LOWER(cast(`process`.`executable` as VARCHAR)), '^.*new\-object.*$') is not null AND REGEXP_EXTRACT(LOWER(cast(`process`.`executable` as VARCHAR)), '^.*net\.webclient.*$') is not null AND REGEXP_EXTRACT(LOWER(cast(`process`.`executable` as VARCHAR)), '^.*\.downloadstring.*$') is not null)  )  OR  ( (REGEXP_EXTRACT(LOWER(cast(`process`.`executable` as VARCHAR)), '^.*new\-object.*$') is not null AND REGEXP_EXTRACT(LOWER(cast(`process`.`executable` as VARCHAR)), '^.*net\.webclient.*$') is not null AND REGEXP_EXTRACT(LOWER(cast(`process`.`executable` as VARCHAR)), '^.*\.downloadfile.*$') is not null)  )  OR  ( (REGEXP_EXTRACT(LOWER(cast(`process`.`executable` as VARCHAR)), '^.*\ iex\(.*$') is not null OR REGEXP_EXTRACT(LOWER(cast(`process`.`executable` as VARCHAR)), '^.*\ \-nop\ .*$') is not null OR REGEXP_EXTRACT(LOWER(cast(`process`.`executable` as VARCHAR)), '^.*\ \-noprofile\ .*$') is not null OR REGEXP_EXTRACT(LOWER(cast(`process`.`executable` as VARCHAR)), '^.*\ \-decode\ .*$') is not null OR REGEXP_EXTRACT(LOWER(cast(`process`.`executable` as VARCHAR)), '^.*\ \-enc\ .*$') is not null OR REGEXP_EXTRACT(LOWER(cast(`process`.`executable` as VARCHAR)), '^.*wscript\.shell.*$') is not null OR REGEXP_EXTRACT(LOWER(cast(`process`.`executable` as VARCHAR)), '^.*system\.security\.cryptography\.frombase64transform.*$') is not null)  ) );
 END;
