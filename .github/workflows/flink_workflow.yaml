@@ -78,7 +78,11 @@ jobs:
             FLINK_HOME=/home/ec2-user/flink/flink-1.18.0
             FLINK_SQL_FILES=/home/ec2-user/flink_ci_cd_pipeline
 
-            # Run Flink command and capture job ID
+            for file in $sql_files; do
+              # Remove file extension to get the SQL file name
+              sql_file_name=$(basename "$file" .sql)
+              
+              # Run Flink command and capture job ID
               job_id=$(sudo $FLINK_HOME/bin/sql-client.sh -f $FLINK_SQL_FILES/$file -e 10.0.6.133:8081 2>&1 | grep 'Job ID' | awk '{print $3}')
               
               # Create new file with job ID
