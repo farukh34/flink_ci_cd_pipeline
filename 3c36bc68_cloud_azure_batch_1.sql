@@ -117,7 +117,7 @@ WITH (
   'connector' = 'kafka',
   'topic' = 'cloud-azure',
   'properties.bootstrap.servers' = '10.0.132.234:9092,10.0.22.60:9092,10.0.43.247:9092',
-  'properties.group.id' = '3c36bc68_cloud_azure_batch01',
+  'properties.group.id' = '3c36bc68_cloud_azure_batch1',
   'scan.startup.mode' = 'latest-offset',
   'format' = 'json',
  'json.fail-on-missing-field' = 'false',
@@ -130,7 +130,7 @@ CREATE TABLE default_catalog.default_database.FlinkOut (
   'connector' = 'kafka',
   'topic' = 'ams_alert_in',
   'properties.bootstrap.servers' = '10.0.132.234:9092,10.0.22.60:9092,10.0.43.247:9092',
-  'properties.group.id' = '3c36bc68_cloud_azure_batch01',
+  'properties.group.id' = '3c36bc68_cloud_azure_batch1',
   'scan.startup.mode' = 'earliest-offset',
   'format' = 'raw'
 );
