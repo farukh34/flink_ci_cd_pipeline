@@ -117,7 +117,7 @@ WITH (
   'connector' = 'kafka',
   'topic' = 'cloud-azure',
   'properties.bootstrap.servers' = '10.0.132.234:9092,10.0.22.60:9092,10.0.43.247:9092',
-  'properties.group.id' = '3c36bc68_cloud_azure_batch1',
+  'properties.group.id' = '3c36bc68_cloud_azure_batch01',
   'scan.startup.mode' = 'latest-offset',
   'format' = 'json',
  'json.fail-on-missing-field' = 'false',
@@ -130,7 +130,7 @@ CREATE TABLE default_catalog.default_database.FlinkOut (
   'connector' = 'kafka',
   'topic' = 'ams_alert_in',
   'properties.bootstrap.servers' = '10.0.132.234:9092,10.0.22.60:9092,10.0.43.247:9092',
-  'properties.group.id' = '3c36bc68_cloud_azure_batch1',
+  'properties.group.id' = '3c36bc68_cloud_azure_batch01',
   'scan.startup.mode' = 'earliest-offset',
   'format' = 'raw'
 );
@@ -160,6 +160,33 @@ insert into FlinkOut SELECT
        'uuid' VALUE UUID(),
        'alert' VALUE JSON_OBJECT('created' VALUE now(), 'kind' VALUE 'alert', 'level' VALUE 'medium'),
        'rule' VALUE JSON_OBJECT('id' VALUE '14b9f789-667e-4cb2-8a07-6ab33060859f', 'name' VALUE 'Microsoft_O365 Excessive Single Sign-On Logon Errors', 'description' VALUE 'Credential Access consists of techniques for stealing credentials like account names and passwords. Techniques used to get credentials include keylogging or credential dumping. Using legitimate credentials can give adversaries access to systems, make them harder to detect, and provide the opportunity to create more accounts to help achieve their goals.  Identifies accounts with a high number of single sign-on (SSO) logon errors. Excessive logon errors may indicate an attempt to brute force a password or SSO token.'),
+       'observables_list' VALUE ARRAY['NA'],
+       'falsepositives' VALUE ARRAY['NA'] ,
+       'tacticidlist' VALUE ARRAY['TA0006'],
+       'techniqueidlist' VALUE ARRAY['T1110']
+
+  )) FROM Cloud_AzureTable WHERE (`organization`.`id`='3c36bc68') AND ((REGEXP_EXTRACT(LOWER(cast(`event`.`provider` as VARCHAR)), '^azureactivedirectory$') is not null) AND (REGEXP_EXTRACT(LOWER(cast(`o365audit`.`logonerror` as VARCHAR)), '^ssoartifactinvalidorexpired$') is not null) );
+insert into FlinkOut SELECT
+  JSON_OBJECT ('event' VALUE JSON_OBJECT('host' VALUE `host`.`name`, 'uuid' VALUE `uuid`, 'created' VALUE `event`.`created`, 'code' VALUE `event`.`code`),
+       'observables' VALUE JSON_OBJECT('event' VALUE JSON_OBJECT ('dataset' VALUE  `event`.`dataset`, 'module' VALUE  `event`.`module`, 'provider' VALUE  `event`.`provider`, 'outcome' VALUE  `event`.`outcome`, 'type' VALUE  `event`.`type`, 'action' VALUE  `event`.`action`, 'kind' VALUE  `event`.`kind`, 'description' VALUE  `event`.`description`, 'id' VALUE  `event`.`id`),'source' VALUE JSON_OBJECT ('ip' VALUE  `source`.`ip`, 'port' VALUE  `source`.`port`),'destination' VALUE JSON_OBJECT ('ip' VALUE  `destination`.`ip`, 'port' VALUE  `destination`.`port`),'cloud' VALUE JSON_OBJECT ('provider' VALUE  `cloud`.`provider`),'service' VALUE JSON_OBJECT ('name' VALUE  `service`.`name`),'threatintel' VALUE JSON_OBJECT ('lookup' VALUE  `threatintel`.`lookup`),'user_agent' VALUE JSON_OBJECT ('original' VALUE  `user_agent`.`original`),'user' VALUE JSON_OBJECT ('email' VALUE  `user`.`email`, 'name' VALUE  `user`.`name`, 'id' VALUE  `user`.`id`),'host' VALUE JSON_OBJECT ('id' VALUE  `host`.`id`)),
+       'observer' value JSON_OBJECT ('type' VALUE `observer`.`type`),
+       'organization' VALUE JSON_OBJECT('id' VALUE `organization`.`id`),
+       'uuid' VALUE UUID(),
+       'alert' VALUE JSON_OBJECT('created' VALUE now(), 'kind' VALUE 'alert', 'level' VALUE 'medium'),
+       'rule' VALUE JSON_OBJECT('id' VALUE 'b80cd0e9-5fc0-4b22-82fe-c25f09cff598', 'name' VALUE 'Microsoft_O365 Excessive Single Sign-On Logon Errors_clone', 'description' VALUE 'Credential Access consists of techniques for stealing credentials like account names and passwords. Techniques used to get credentials include keylogging or credential dumping. Using legitimate credentials can give adversaries access to systems, make them harder to detect, and provide the opportunity to create more accounts to help achieve their goals.  Identifies accounts with a high number of single sign-on (SSO) logon errors. Excessive logon errors may indicate an attempt to brute force a password or SSO token.'),
+       'observables_list' VALUE ARRAY['NA'],
+       'falsepositives' VALUE ARRAY['NA'] ,
+       'tacticidlist' VALUE ARRAY['TA0006'],
+       'techniqueidlist' VALUE ARRAY['T1110']
+
+  , 'source_data' VALUE
+  JSON_OBJECT ('event' VALUE JSON_OBJECT('host' VALUE `host`.`name`, 'uuid' VALUE `uuid`, 'created' VALUE `event`.`created`, 'code' VALUE `event`.`code`),
+       'observables' VALUE JSON_OBJECT('event' VALUE JSON_OBJECT ('dataset' VALUE  `event`.`dataset`, 'module' VALUE  `event`.`module`, 'provider' VALUE  `event`.`provider`, 'outcome' VALUE  `event`.`outcome`, 'type' VALUE  `event`.`type`, 'action' VALUE  `event`.`action`, 'kind' VALUE  `event`.`kind`, 'description' VALUE  `event`.`description`, 'id' VALUE  `event`.`id`),'source' VALUE JSON_OBJECT ('ip' VALUE  `source`.`ip`, 'port' VALUE  `source`.`port`),'destination' VALUE JSON_OBJECT ('ip' VALUE  `destination`.`ip`, 'port' VALUE  `destination`.`port`),'cloud' VALUE JSON_OBJECT ('provider' VALUE  `cloud`.`provider`),'service' VALUE JSON_OBJECT ('name' VALUE  `service`.`name`),'threatintel' VALUE JSON_OBJECT ('lookup' VALUE  `threatintel`.`lookup`),'user_agent' VALUE JSON_OBJECT ('original' VALUE  `user_agent`.`original`),'user' VALUE JSON_OBJECT ('email' VALUE  `user`.`email`, 'name' VALUE  `user`.`name`, 'id' VALUE  `user`.`id`),'host' VALUE JSON_OBJECT ('id' VALUE  `host`.`id`)),
+       'observer' value JSON_OBJECT ('type' VALUE `observer`.`type`),
+       'organization' VALUE JSON_OBJECT('id' VALUE `organization`.`id`),
+       'uuid' VALUE UUID(),
+       'alert' VALUE JSON_OBJECT('created' VALUE now(), 'kind' VALUE 'alert', 'level' VALUE 'medium'),
+       'rule' VALUE JSON_OBJECT('id' VALUE 'b80cd0e9-5fc0-4b22-82fe-c25f09cff598', 'name' VALUE 'Microsoft_O365 Excessive Single Sign-On Logon Errors_clone', 'description' VALUE 'Credential Access consists of techniques for stealing credentials like account names and passwords. Techniques used to get credentials include keylogging or credential dumping. Using legitimate credentials can give adversaries access to systems, make them harder to detect, and provide the opportunity to create more accounts to help achieve their goals.  Identifies accounts with a high number of single sign-on (SSO) logon errors. Excessive logon errors may indicate an attempt to brute force a password or SSO token.'),
        'observables_list' VALUE ARRAY['NA'],
        'falsepositives' VALUE ARRAY['NA'] ,
        'tacticidlist' VALUE ARRAY['TA0006'],
